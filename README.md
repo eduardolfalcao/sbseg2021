@@ -1,7 +1,7 @@
 # SBSEG 2021
 
 Este repositório contém um exemplo simples de atestação de cargas de trabalho com SPIRE. 
-Alem disso o proxy Ghostunnel eh utilizado para permitir que as cargas de trabalho se comuniquem transparentemente de forma segura via mTLS.
+Além disso o proxy Ghostunnel eh utilizado para permitir que as cargas de trabalho se comuniquem transparentemente de forma segura via mTLS.
 
 A arquitetura do exemplo eh ilustrada na Figura abaixo.
 
@@ -9,7 +9,7 @@ FIGURA
 
 ## Configurando o Servidor e Agentes SPIRE
 
-Para este exemplo utilizamos a distribuicao Ubuntu 20.04, em uma VM gom 1GB RAM e 1 vCPU.
+Para este exemplo utilizamos a distribuição Ubuntu 20.04, em uma VM gom 1GB RAM e 1 vCPU.
 Uma VM foi utilizada para instanciar o servidor SPIRE, e 2 outras VMs foram utilizadas para instanciar os agentes SPIRE com suas respectivas cargas de trabalho.
 
 ```bash
@@ -45,7 +45,7 @@ spire-server run -config conf/server/server.conf
 ```
 
 Em seguida, obtemos dois tokens de entradas, junto ao servidor SPIRE, para os agentes.
-Os agentes terao os seguintes SPIFFE IDS: spiffe://example.org/agent1 e spiffe://example.org/agent2.
+Os agentes terão os seguintes SPIFFE IDS: spiffe://example.org/agent1 e spiffe://example.org/agent2.
 
 ```bash
 spire-server token generate -socketPath ./data/server.sock -spiffeID spiffe://example.org/agent1
@@ -64,11 +64,11 @@ spire-agent run -config conf/agent/agent.conf -joinToken "<token>"
 
 ## Executando a DEMO
 
-Primeiro eh necessario criar, no servidor, os registros de entrada correspondente as cargas de trabalho.
-Nesse exemplo, SVIDs serao entregues as cargas de trabalho com user id 1000.
+Primeiro é necessário criar, no servidor, os registros de entrada correspondente às cargas de trabalho.
+Nesse exemplo, SVIDs serão entregues às cargas de trabalho com user id 1000.
 
-Em um contexto mais generalista, faria sentido que os SPIFFE IDs refletissem os seletores atestados.
-Porem, para que esse exemplo especifico com ghostunnel fique mais compreensivel, utilizaremos SPIFFE IDs que identifiquem quem eh Ghostunnel cliente e quem eh o Ghostunnel Servidor.
+Em um contexto mais generalista, talvez fizesse mais sentido que os SPIFFE IDs refletissem os seletores atestados.
+Porém, para que esse exemplo específico com Ghostunnel fique mais compreensível, utilizaremos SPIFFE IDs que identifiquem quem é Ghostunnel no modo cliente e quem é o Ghostunnel no modo servidor.
 
 ```bash
 # servidor SPIRE: criar registros de entrada para ghostunnel
@@ -76,9 +76,9 @@ spire-server entry create -socketPath ./data/server.sock -selector unix:uid:1000
 spire-server entry create -socketPath ./data/server.sock -selector unix:uid:1000  -spiffeID spiffe://example.org/proxy/ghostunnel-server  -parentID spiffe://example.org/agent2
 ```
 
-Depois da criacao dos registros de entrada eh possivel iniciar as cargas de trabalho.
-No agente 1 executaremos o ghostunnel no modo cliente, de modo que possa receber mensagens locais e rapassar para servi;os remotos com autenticacao mTLS.
-E no agente 2 executaremos o ghostunnel no modo servidor, de modo que aceite requisicoes de servicos que possuam SVID com determinado SPIFFE ID.
+Depois da criacao dos registros de entrada é possível iniciar as cargas de trabalho.
+No agente 1 executaremos o Ghostunnel no modo cliente, de modo que possa receber mensagens locais e rapassar para serviços remotos com autenticação mTLS.
+E no agente 2 executaremos o Ghostunnel no modo servidor, de modo que aceite requisições de serviços que possuam SVID com determinado SPIFFE ID.
 
 ```bash
 # Agente 1
@@ -90,7 +90,7 @@ cd ~/spire-1.0.1/
 ghostunnel-v1.6.0-linux-amd64 server --use-workload-api-addr "unix://${PWD}/data/agent.sock" --listen=10.11.19.207:8081 --target=localhost:9001 --allow-uri spiffe://example.org/proxy/ghostunnel-client
 ```
 
-Finalmente, usamos socat para enviar uma mensagem para o ghostunnel no agente 1, e imprimir a mensagem recebida no agente 2.
+Finalmente, usamos socat para enviar uma mensagem para o Ghostunnel no agente 1, e imprimir a mensagem recebida no agente 2.
 Lembre-se que a VM do agente 2 precisa estar com a porta 8081 aberta.
 
 ```bash
