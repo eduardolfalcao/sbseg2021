@@ -5,7 +5,7 @@ Além disso o proxy Ghostunnel eh utilizado para permitir que as cargas de traba
 
 A arquitetura do exemplo eh ilustrada na Figura abaixo.
 
-FIGURA
+![](carga-trabalho-ghostunnel.png)
 
 ## Configurando o Servidor e Agentes SPIRE
 
