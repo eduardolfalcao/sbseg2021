@@ -40,7 +40,9 @@ echo \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io 
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo usermod -aG docker $USER
+docker --version
 ```
 
 ## Primeira execucao: Alo Mundo sem atestação e sem segredo
@@ -94,5 +96,21 @@ vim sessao.yml
 
 # Finalmente, enviamos a sessão para o CAS público
 scone session create sessao.yml
+# CTRL+D para sair
+
+# Deploy do LAS
+sudo docker run -it --rm --name las --device /dev/isgx -p 18766:18766 registry.scontain.com:5050/sconecuratedimages/spire:las-scone5.4.0
+
+# Configurando o CAS remoto, o LAS local e o nome da sessão
+export SCONE_CAS_ADDR=5-5-0.scone-cas.cf
+export SCONE_LAS_ADDR=172.17.0.1
+export SCONE_CONFIG_ID=sessao-exemplo/alo-mundo
+
+# Por fim, executamos a app confidencial, que é atestada e consome o segredo:
+sudo docker run -it --rm --device /dev/isgx \
+  -e SCONE_CAS_ADDR=$SCONE_CAS_ADDR \
+  -e SCONE_LAS_ADDR=$SCONE_LAS_ADDR \
+  -e SCONE_CONFIG_ID=$SCONE_CONFIG_ID \
+  sbseg-alo-mundo-scone-fspf
 ```
 
