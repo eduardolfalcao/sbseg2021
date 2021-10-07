@@ -46,8 +46,8 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 ## Primeira execucao: Alo Mundo sem atestação e sem segredo
 
 ```bash
-sudo docker build . -t alo-mundo-scone=no-atest -f scone-no-atest.Dockerfile
-sudo docker run -it --rm --device /dev/isgx alo-mundo-scone=no-atest
+sudo docker build . -t alo-mundo-scone-no-attest -f scone-no-attest.Dockerfile
+sudo docker run -it --rm --device /dev/isgx alo-mundo-scone-no-attest
 ```
 
 ## Segunda execução: fonte encriptado, com atestacao e acesso a segredo
@@ -56,6 +56,7 @@ sudo docker run -it --rm --device /dev/isgx alo-mundo-scone=no-atest
 # Criamos o diretório para as diferentes versões dos arquivos
 # (e para o nosso arquivos de controle, fspf.sh e volume.fspf)
 mkdir fspf native-files encrypted-files 
+cat /native-files/keytag
 cp programa.py native-files/
 chmod +x fspf.sh
 cp fspf.sh fspf/
@@ -67,6 +68,8 @@ sudo docker run -it --rm --device /dev/isgx \
  -v $PWD/encrypted-files:/app \
  registry.scontain.com:5050/sconecuratedimages/$IMAGEM \
  bash -c /fspf/fspf.sh
+
+cat native-files/keytag
 
 # Geração da imagem
 sudo docker build . -t sbseg-alo-mundo-scone-fspf -f scone-fspf.Dockerfile
@@ -87,5 +90,9 @@ scone cas attest 5-5-0.scone-cas.cf -GCS \
 
 apk add vim
 vim sessao.yml
+# Adicionar MRENCLAVE, KEY, e TAG
+
+# Finalmente, enviamos a sessão para o CAS público
+scone session create sessao.yml
 ```
 

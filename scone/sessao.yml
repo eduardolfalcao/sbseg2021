@@ -14,4 +14,4 @@ services:
 security:
     attestation:
         tolerate: [debug-mode, hyperthreading, outdated-tcb]
-              ignore_advisories: "*"
+        ignore_advisories: "*"
